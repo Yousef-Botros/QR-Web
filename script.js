@@ -63,8 +63,11 @@ function generate() {
     document.getElementById('display-name').innerText = payload.name;
     document.getElementById('display-name').setAttribute('data-text', payload.name);
     
+    // ابحث عن الجزء ده في الـ generate function وعدله كدة:
     if (uploadedImageUrl) {
-        document.getElementById('profile-img').src = uploadedImageUrl;
+        const imgElement = document.getElementById('profile-img');
+        imgElement.src = uploadedImageUrl;
+        imgElement.style.display = 'block'; // ده السطر اللي كان ناقص عشان الصورة تظهر في المعاينة
     }
 
     const socialLinks = {
