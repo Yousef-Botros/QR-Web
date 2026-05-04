@@ -36,6 +36,7 @@ body {
     box-shadow: 0 40px 80px rgba(0,0,0,0.2);
     transition: transform 0.1s ease-out; /* تم الحفاظ عليها لنعومة الحركة */
     transform-style: preserve-3d; /* تم الحفاظ عليها لضمان تأثير العمق */
+    will-change: transform; /* تحسين أداء الحركة */
 }
 
 /* --- إضافة خاصة للكارت اللي هيتهز (Result Area) --- */
@@ -43,6 +44,7 @@ body {
     transform-style: preserve-3d;
     will-change: transform; /* عشان الموبايل يجهز كارت الشاشة للحركة */
     transition: transform 0.1s ease-out;
+    transform: rotateY(0deg) rotateX(0deg); /* تصفير افتراضي لضمان استمرارية الحركة */
 }
 
 .card:not(.profile-card) h2 {
@@ -204,6 +206,10 @@ body {
     text-align: center;
     color: white;
     box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+    /* إضافة خصائص الحركة لصفحة الـ Profile */
+    transition: transform 0.1s ease-out;
+    transform-style: preserve-3d;
+    will-change: transform;
 }
 
 .profile-avatar-wrapper {
