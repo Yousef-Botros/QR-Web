@@ -127,17 +127,53 @@ if (deleteBtn) {
     });
 }
 
-/* --- إضافة ميزة هز الكارت مع الموبايل (Gyroscope Effect) --- */
-window.addEventListener('deviceorientation', (event) => {
-    // نطبق التأثير فقط في صفحة النتيجة (لما يكون الكارت ظاهر)
-    const resultCard = document.getElementById('result-area');
-    
-    if (resultCard && resultCard.style.display === 'block') {
-        const tiltX = event.gamma / 5; // الهز يمين وشمال
-        const tiltY = event.beta / 5;  // الهز قدام وورا
+// --- الجزء المطور لحركة الكروت (Parallax System) ---
 
-        // تحريك الكارت بنعومة
-        resultCard.style.transform = `rotateY(${tiltX}deg) rotateX(${-tiltY}deg)`;
-        resultCard.style.transition = "transform 0.1s ease-out";
+// دالة تحريك العناصر الموحدة
+function moveElement(el, x, y) {
+    if (!el) return;
+    el.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+    el.style.transition = "transform 0.1s ease-out";
+}
+
+// 1. حركة الموبايل (Gyroscope)
+window.addEventListener('deviceorientation', (event) => {
+    // نجلب كل الكروت الممكنة في الصفحة (سواء index أو profile)
+    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+    
+    let x = event.gamma / 5; // الهز يمين وشمال
+    let y = event.beta / 5;  // الهز قدام وورا
+
+    if (x !== null && y !== null) {
+        cards.forEach(card => {
+            // نتحقق إن الكارت ظاهر فعلياً للمستخدم
+            if (getComputedStyle(card).display !== 'none') {
+                moveElement(card, x, y);
+            }
+        });
     }
+});
+
+// 2. حركة الماوس للكمبيوتر (Desktop Mouse Move)
+document.addEventListener('mousemove', (e) => {
+    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+    
+    cards.forEach(card => {
+        if (getComputedStyle(card).display !== 'none') {
+            const rect = card.getBoundingClientRect();
+            // حساب مكان الماوس بالنسبة لمنتصف الكارت
+            const x = (e.clientX - rect.left - rect.width / 2) / 15;
+            const y = (e.clientY - rect.top - rect.height / 2) / 15;
+            moveElement(card, x, y);
+        }
+    });
+});
+
+// 3. إعادة الكارت لوضعه الطبيعي عند خروج الماوس
+document.addEventListener('mouseleave', () => {
+    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+    cards.forEach(card => {
+        card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        card.style.transition = "transform 0.5s ease";
+    });
 });
