@@ -39,10 +39,20 @@ function generate() {
         img: uploadedImageUrl
     };
 
+    // الرابط الكامل لزرار النسخ (فيه كل البيانات بأساميها الأصلية)
     const encoded = encodeURIComponent(JSON.stringify(payload));
     const profileUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${encoded}`;
 
-    const shortPayload = { ...payload, img: "" }; 
+    // --- التعديل هنا: نظام الاختصارات للـ QR Code عشان الصورة تظهر واللينك يصغر ---
+    const shortPayload = { 
+        n: payload.name, 
+        f: payload.fb, 
+        i: payload.ig, 
+        l: payload.ln, 
+        w: payload.wa,
+        p: payload.img // p اختصار لـ photo (رابط Cloudinary)
+    };
+    
     const shortEncoded = encodeURIComponent(JSON.stringify(shortPayload));
     const qrUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${shortEncoded}`;
 
@@ -80,7 +90,7 @@ function generate() {
     if (qrBox) {
         qrBox.innerHTML = ""; 
         new QRCode(qrBox, {
-            text: qrUrl,
+            text: qrUrl, // اللينك اللي فيه الصورة بس باختصارات
             width: 256,
             height: 256,
             colorDark : "#000000",
