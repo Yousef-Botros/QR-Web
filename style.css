@@ -14,7 +14,7 @@ body {
     background-size: 400% 400%; 
     animation: gradientBG 10s ease infinite;
     overflow: hidden; 
-    perspective: 1500px;
+    perspective: 1500px; /* دي اللي بتخلي الهزة تبان 3D */
 }
 
 @keyframes gradientBG {
@@ -34,8 +34,15 @@ body {
     text-align: center; 
     color: white;
     box-shadow: 0 40px 80px rgba(0,0,0,0.2);
-    transition: transform 0.1s ease-out; 
+    transition: transform 0.1s ease-out; /* تم الحفاظ عليها لنعومة الحركة */
+    transform-style: preserve-3d; /* تم الحفاظ عليها لضمان تأثير العمق */
+}
+
+/* --- إضافة خاصة للكارت اللي هيتهز (Result Area) --- */
+#result-area {
     transform-style: preserve-3d;
+    will-change: transform; /* عشان الموبايل يجهز كارت الشاشة للحركة */
+    transition: transform 0.1s ease-out;
 }
 
 .card:not(.profile-card) h2 {
