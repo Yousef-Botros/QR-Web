@@ -39,18 +39,16 @@ function generate() {
         img: uploadedImageUrl
     };
 
-    // الرابط الكامل لزرار النسخ (فيه كل البيانات بأساميها الأصلية)
     const encoded = encodeURIComponent(JSON.stringify(payload));
     const profileUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${encoded}`;
 
-    // --- التعديل هنا: نظام الاختصارات للـ QR Code عشان الصورة تظهر واللينك يصغر ---
     const shortPayload = { 
         n: payload.name, 
         f: payload.fb, 
         i: payload.ig, 
         l: payload.ln, 
         w: payload.wa,
-        p: payload.img // p اختصار لـ photo (رابط Cloudinary)
+        p: payload.img 
     };
     
     const shortEncoded = encodeURIComponent(JSON.stringify(shortPayload));
@@ -63,11 +61,10 @@ function generate() {
     document.getElementById('display-name').innerText = payload.name;
     document.getElementById('display-name').setAttribute('data-text', payload.name);
     
-    // ابحث عن الجزء ده في الـ generate function وعدله كدة:
     if (uploadedImageUrl) {
         const imgElement = document.getElementById('profile-img');
         imgElement.src = uploadedImageUrl;
-        imgElement.style.display = 'block'; // ده السطر اللي كان ناقص عشان الصورة تظهر في المعاينة
+        imgElement.style.display = 'block'; 
     }
 
     const socialLinks = {
@@ -93,7 +90,7 @@ function generate() {
     if (qrBox) {
         qrBox.innerHTML = ""; 
         new QRCode(qrBox, {
-            text: qrUrl, // اللينك اللي فيه الصورة بس باختصارات
+            text: qrUrl,
             width: 256,
             height: 256,
             colorDark : "#000000",
@@ -129,3 +126,18 @@ if (deleteBtn) {
         deleteBtn.style.display = 'none';
     });
 }
+
+/* --- إضافة ميزة هز الكارت مع الموبايل (Gyroscope Effect) --- */
+window.addEventListener('deviceorientation', (event) => {
+    // نطبق التأثير فقط في صفحة النتيجة (لما يكون الكارت ظاهر)
+    const resultCard = document.getElementById('result-area');
+    
+    if (resultCard && resultCard.style.display === 'block') {
+        const tiltX = event.gamma / 5; // الهز يمين وشمال
+        const tiltY = event.beta / 5;  // الهز قدام وورا
+
+        // تحريك الكارت بنعومة
+        resultCard.style.transform = `rotateY(${tiltX}deg) rotateX(${-tiltY}deg)`;
+        resultCard.style.transition = "transform 0.1s ease-out";
+    }
+});
