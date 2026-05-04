@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yousef Botros | Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="card profile-card" id="card">
+        
+        <div class="profile-avatar-wrapper">
+            <div class="profile-avatar">
+                <img id="profile-img" src="" style="display:none; width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        </div>
+
+        <h2 id="display-name" class="profile-name" data-text="">Loading...</h2>
+        
+        <div class="social-links" id="social-container"></div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const encodedData = params.get('data');
+
+            if (encodedData) {
+                try {
+                    const decoded = JSON.parse(decodeURIComponent(encodedData));
+                    
+                    const displayName = document.getElementById('display-name');
+                    const nameValue = decoded.name || "Yousef Botros";
+                    
+                    displayName.innerText = nameValue;
+                    displayName.setAttribute('data-text', nameValue);
+
+                    if (decoded.img) {
+                        const img = document.getElementById('profile-img');
+                        img.src = decoded.img;
+                        img.style.display = "block";
+                    }
+                    
+                    const container = document.getElementById('social-container');
+                    container.innerHTML = "";
+                    
+                    const links = [
+                        { icon: 'fab fa-facebook', url: decoded.fb },
+                        { icon: 'fab fa-instagram', url: decoded.ig },
+                        { icon: 'fab fa-linkedin', url: decoded.ln },
+                        { icon: 'fab fa-whatsapp', url: decoded.wa ? `https://wa.me/${decoded.wa}` : null }
+                    ];
+                    
+                    links.forEach(link => {
+                        if (link.url) {
+                            const a = document.createElement('a');
+                            a.href = link.url.startsWith('http') ? link.url : `https://${link.url}`;
+                            a.target = "_blank";
+                            a.innerHTML = `<i class="${link.icon}"></i>`;
+                            container.appendChild(a);
+                        }
+                    });
+
+                } catch (e) { 
+                    console.error("Decoding Error:", e);
+                    document.getElementById('display-name').innerText = "Profile Not Found";
+                }
+            }
+        };
+
+        const card = document.getElementById('card');
+        document.addEventListener('mousemove', (e) => {
+            if(!card) return;
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+            if(!card) return;
+            card.style.transition = "all 0.5s ease";
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        document.addEventListener('mouseenter', () => {
+            if(!card) return;
+            card.style.transition = "none";
+        });
+    </script>
+</body>
+</html>
