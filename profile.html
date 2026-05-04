@@ -31,15 +31,22 @@
                 try {
                     const decoded = JSON.parse(decodeURIComponent(encodedData));
                     
+                    // --- التعديل هنا: قراءة البيانات سواء كانت كاملة أو مختصرة ---
+                    const nameValue = decoded.name || decoded.n || "Yousef Botros";
+                    const imgUrl = decoded.img || decoded.p;
+                    const fbLink = decoded.fb || decoded.f;
+                    const igLink = decoded.ig || decoded.i;
+                    const lnLink = decoded.ln || decoded.l;
+                    const waLink = decoded.wa || decoded.w;
+
                     const displayName = document.getElementById('display-name');
-                    const nameValue = decoded.name || "Yousef Botros";
-                    
                     displayName.innerText = nameValue;
                     displayName.setAttribute('data-text', nameValue);
 
-                    if (decoded.img) {
+                    // عرض الصورة لو موجودة بأي من المسميين
+                    if (imgUrl) {
                         const img = document.getElementById('profile-img');
-                        img.src = decoded.img;
+                        img.src = imgUrl;
                         img.style.display = "block";
                     }
                     
@@ -47,10 +54,10 @@
                     container.innerHTML = "";
                     
                     const links = [
-                        { icon: 'fab fa-facebook', url: decoded.fb },
-                        { icon: 'fab fa-instagram', url: decoded.ig },
-                        { icon: 'fab fa-linkedin', url: decoded.ln },
-                        { icon: 'fab fa-whatsapp', url: decoded.wa ? `https://wa.me/${decoded.wa}` : null }
+                        { icon: 'fab fa-facebook', url: fbLink },
+                        { icon: 'fab fa-instagram', url: igLink },
+                        { icon: 'fab fa-linkedin', url: lnLink },
+                        { icon: 'fab fa-whatsapp', url: waLink ? `https://wa.me/${waLink}` : null }
                     ];
                     
                     links.forEach(link => {
