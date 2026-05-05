@@ -123,33 +123,31 @@ function copyProfileLink() {
     }
 }
 
-// --- 3. Professional Parallax System (Gyro & Mouse) ---
+// --- 3. Professional Parallax System (Modified for Stability & Interactivity) ---
 
 function moveElement(el, x, y, isMouse = false) {
     if (!el) return;
-    // تنعيم الحركة جداً لمنع الـ Flicker
-    el.style.transition = isMouse ? "transform 0.1s ease-out" : "transform 0.2s ease-out";
+    // تم تحسين الـ transition ليكون أسرع في الاستجابة وأهدى في الحركة
+    el.style.transition = isMouse ? "transform 0.2s cubic-bezier(0.03, 0.98, 0.52, 0.99)" : "transform 0.1s ease-out";
     el.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
 }
 
-// دعم الموبايل (Gyroscope) - يتحرك مع ميلان الهاتف
+// دعم الموبايل (Gyroscope)
 function initGyro() {
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // للأيفون لازم إذن
         DeviceOrientationEvent.requestPermission()
             .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleGyro); })
             .catch(console.error);
     } else {
-        // للأندرويد
         window.addEventListener('deviceorientation', handleGyro);
     }
 }
 
 function handleGyro(event) {
     const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    // x: ميلان يمين/شمال | y: ميلان قدام/ورا
-    let x = event.gamma / 3; 
-    let y = (event.beta - 45) / 3; 
+    // تم القسمة على 8 بدل 3 لتقليل المرجحة العنيفة على الموبايل
+    let x = event.gamma / 8; 
+    let y = (event.beta - 45) / 8; 
 
     cards.forEach(card => {
         if (getComputedStyle(card).display !== 'none') {
@@ -164,18 +162,22 @@ document.addEventListener('mousemove', (e) => {
     cards.forEach(card => {
         if (getComputedStyle(card).display !== 'none') {
             const rect = card.getBoundingClientRect();
-            const x = (e.clientX - rect.left - rect.width / 2) / 15;
-            const y = (e.clientY - rect.top - rect.height / 2) / 15;
+            // تم القسمة على 35 بدل 15 ليكون التأثير ناعم ولا يؤثر على دقة الضغط على الأزرار
+            const x = (e.clientX - rect.left - rect.width / 2) / 35;
+            const y = (e.clientY - rect.top - rect.height / 2) / 35;
             moveElement(card, x, y, true);
         }
     });
 });
 
-// إعادة الوضع الطبيعي عند الخروج بالماوس
-document.addEventListener('mouseleave', () => {
-    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    cards.forEach(card => {
-        card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
-        card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+// إعادة الوضع الطبيعي عند الخروج بالماوس أو انتهاء اللمس
+const resetEvents = ['mouseleave', 'touchend'];
+resetEvents.forEach(evt => {
+    document.addEventListener(evt, () => {
+        const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+        cards.forEach(card => {
+            card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
     });
 });
