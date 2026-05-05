@@ -16,7 +16,7 @@ body {
     overflow: hidden; 
     perspective: 1500px; /* دي اللي بتخلي الهزة تبان 3D */
     
-    /* إضافة لضمان عدم تعارض اللمس مع السكرول أثناء حركة الكارت */
+    /* تعديل لضمان عدم تعارض اللمس مع السكرول */
     touch-action: none; 
 }
 
@@ -25,7 +25,6 @@ body {
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-
 
 #main-card.card, .card:not(.profile-card) {
     background: rgba(255, 255, 255, 0.2); 
@@ -37,20 +36,21 @@ body {
     text-align: center; 
     color: white;
     box-shadow: 0 40px 80px rgba(0,0,0,0.2);
-    transition: transform 0.1s ease-out; /* تم الحفاظ عليها لنعومة الحركة */
-    transform-style: preserve-3d; /* تم الحفاظ عليها لضمان تأثير العمق */
-    will-change: transform; /* تحسين أداء الحركة */
+    transition: transform 0.1s ease-out;
+    transform-style: preserve-3d;
+    will-change: transform;
     position: relative;
     z-index: 1;
 }
 
-/* --- إضافة خاصة للكارت اللي هيتهز (Result Area) --- */
+/* التعديل: ضمان إن كارت النتيجة يدعم العمق والضغط */
 #result-area {
     transform-style: preserve-3d;
-    will-change: transform; /* عشان الموبايل يجهز كارت الشاشة للحركة */
+    will-change: transform;
     transition: transform 0.1s ease-out;
-    transform: rotateY(0deg) rotateX(0deg); /* تصفير افتراضي لضمان استمرارية الحركة */
+    transform: rotateY(0deg) rotateX(0deg);
     position: relative;
+    display: none; /* بيظهر بالـ JS */
 }
 
 .card:not(.profile-card) h2 {
@@ -60,6 +60,7 @@ body {
     letter-spacing: 0.5px;
     animation: pulseGlow 2s infinite ease-in-out;
     transition: all 0.3s ease;
+    transform: translateZ(20px); /* رفع العنوان للأمام */
 }
 
 .card:not(.profile-card) h2:hover {
@@ -77,6 +78,7 @@ body {
 .input-box { 
     position: relative; 
     margin-bottom: 15px; 
+    transform: translateZ(10px); /* رفع الصندوق قليلاً */
 }
 
 .input-box input {
@@ -126,6 +128,7 @@ body {
     gap: 10px;
     margin-top: 15px;
     align-items: stretch;
+    transform: translateZ(15px);
 }
 
 .upload-btn {
@@ -144,12 +147,13 @@ body {
     color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto !important; /* ضمان الضغط */
 }
 
 .upload-btn:hover {
     background: #ffffff; 
     color: #3b82f6; 
-    transform: scale(1.05);
+    transform: scale(1.05) translateZ(10px);
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -166,6 +170,7 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    pointer-events: auto !important;
 }
 
 .delete-btn:hover {
@@ -173,7 +178,6 @@ body {
     color: white;
     border-color: #ff4b4b;
     transform: scale(1.1);
-    box-shadow: 0 10px 20px rgba(255, 75, 75, 0.4);
 }
 
 .main-btn {
@@ -194,15 +198,17 @@ body {
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     
-    /* إضافة لضمان التفاعل في البيئة الـ 3D */
-    transform: translateZ(10px); 
+    /* تعديل: رفع الزرار في طبقة Z عالية جداً لضمان التفاعل */
+    transform: translateZ(40px); 
+    position: relative;
+    z-index: 99;
     pointer-events: auto !important;
 }
 
 .main-btn:hover {
     background: #ffffff; 
     color: #3b82f6; 
-    transform: scale(1.05) translateZ(20px);
+    transform: scale(1.05) translateZ(50px);
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -216,7 +222,6 @@ body {
     text-align: center;
     color: white;
     box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-    /* إضافة خصائص الحركة لصفحة الـ Profile */
     transition: transform 0.1s ease-out;
     transform-style: preserve-3d;
     will-change: transform;
@@ -224,7 +229,6 @@ body {
     z-index: 1;
 }
 
-/* ضمان إن كل المحتوى داخل الكارت يدعم العمق */
 .profile-card > * {
     transform-style: preserve-3d;
 }
@@ -242,6 +246,7 @@ body {
     z-index: 1; 
     overflow: hidden;
     isolation: isolate; 
+    transform: translateZ(20px); /* رفع الصورة */
 }
 
 .profile-avatar-wrapper::before {
@@ -271,15 +276,9 @@ body {
     width: 100%; 
     height: 100%; 
     object-fit: cover; 
-    
     image-rendering: -webkit-optimize-contrast; 
-    image-rendering: crisp-edges;
-    image-rendering: smooth; 
-    
     transform: translate3d(0, 0, 0); 
     will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
 }
 
 .profile-name {
@@ -290,7 +289,7 @@ body {
     cursor: pointer;
     display: inline-block;
     transition: all 0.4s ease;
-    transform: translateZ(15px);
+    transform: translateZ(35px); /* الاسم بارز جداً */
 }
 
 .profile-name::before {
@@ -316,7 +315,9 @@ body {
     justify-content: center; 
     gap: 15px; 
     margin-top: 20px;
-    transform: translateZ(10px);
+    transform: translateZ(30px); /* رفع الأيقونات للأمام */
+    position: relative;
+    z-index: 100;
 }
 
 .social-links a {
@@ -333,14 +334,14 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     text-decoration: none;
     
-    /* لضمان التفاعل */
+    /* تعديل: السماح بالضغط حتى مع الـ 3D */
     pointer-events: auto !important;
     position: relative;
-    z-index: 5;
+    z-index: 105;
 }
 
 .social-links a:hover {
-    transform: translateY(-10px) scale(1.1) translateZ(20px);
+    transform: translateY(-10px) scale(1.1) translateZ(40px);
     background: white; 
 }
 
@@ -349,13 +350,14 @@ body {
 .social-links a:hover .fa-linkedin { color: #0A66C2; }
 .social-links a:hover .fa-whatsapp { color: #25D366; }
 
+/* تنسيق النتيجة (Result Area) المدمج */
 #result-area .social-links {
     display: flex !important;
     justify-content: center !important;
     gap: 15px !important;
     margin: 25px 0 !important;
     width: 100% !important;
-    transform: translateZ(10px);
+    transform: translateZ(30px);
 }
 
 #result-area .social-links a {
@@ -368,15 +370,8 @@ body {
     align-items: center !important;
     justify-content: center !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    text-decoration: none !important;
     pointer-events: auto !important;
-}
-
-#result-area .social-links a i {
-    font-size: 20px !important;
-    color: white !important;
-    display: block !important;
-    line-height: 1 !important;
+    z-index: 110;
 }
 
 #qrcode {
@@ -390,13 +385,12 @@ body {
     align-items: center !important;
     justify-content: center !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    transform: translateZ(5px);
+    transform: translateZ(15px);
 }
 
 #qrcode img {
     width: 100% !important;
     height: 100% !important;
-    image-rendering: auto !important; 
     display: block;
 }
 
@@ -409,10 +403,7 @@ body {
     max-width: 280px !important;
     margin: 0 auto 12px auto !important;
     height: 50px !important;
-    font-size: 14px !important;
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 20px !important;
-    transform: translateZ(10px);
+    transform: translateZ(40px);
+    z-index: 120;
+    pointer-events: auto !important;
 }
