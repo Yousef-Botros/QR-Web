@@ -41,6 +41,8 @@ body {
     will-change: transform;
     position: relative;
     z-index: 1;
+    /* إضافة: السماح بالضغط */
+    pointer-events: auto !important;
 }
 
 /* التعديل: ضمان إن كارت النتيجة يدعم العمق والضغط */
@@ -51,6 +53,7 @@ body {
     transform: rotateY(0deg) rotateX(0deg);
     position: relative;
     display: none; /* بيظهر بالـ JS */
+    pointer-events: auto !important;
 }
 
 .card:not(.profile-card) h2 {
@@ -60,7 +63,7 @@ body {
     letter-spacing: 0.5px;
     animation: pulseGlow 2s infinite ease-in-out;
     transition: all 0.3s ease;
-    transform: translateZ(20px); /* رفع العنوان للأمام */
+    transform: translateZ(50px); /* زيادة البروز لضمان الهوفر */
 }
 
 .card:not(.profile-card) h2:hover {
@@ -78,7 +81,7 @@ body {
 .input-box { 
     position: relative; 
     margin-bottom: 15px; 
-    transform: translateZ(10px); /* رفع الصندوق قليلاً */
+    transform: translateZ(30px); /* رفع الصندوق قليلاً ليكون أمام الكارت */
 }
 
 .input-box input {
@@ -90,6 +93,7 @@ body {
     color: white; 
     outline: none; 
     transition: all 0.3s ease;
+    pointer-events: auto !important;
 }
 
 .input-box:hover input {
@@ -108,7 +112,7 @@ body {
     position: absolute; 
     left: 18px; 
     top: 50%; 
-    transform: translateY(-50%); 
+    transform: translateY(-50%) translateZ(5px); 
     color: white; 
     transition: all 0.3s ease; 
 }
@@ -120,7 +124,7 @@ body {
 .input-box:hover .fa-whatsapp { color: #25D366 !important; filter: drop-shadow(0 0 8px #25D366); }
 
 .input-box:hover i {
-    transform: translateY(-50%) scale(1.2);
+    transform: translateY(-50%) scale(1.2) translateZ(10px);
 }
 
 .photo-actions {
@@ -128,7 +132,7 @@ body {
     gap: 10px;
     margin-top: 15px;
     align-items: stretch;
-    transform: translateZ(15px);
+    transform: translateZ(40px); /* رفع منطقة الصور */
 }
 
 .upload-btn {
@@ -147,13 +151,14 @@ body {
     color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: auto !important; /* ضمان الضغط */
+    pointer-events: auto !important; 
+    transform: translateZ(10px);
 }
 
 .upload-btn:hover {
-    background: #ffffff; 
-    color: #3b82f6; 
-    transform: scale(1.05) translateZ(10px);
+    background: #ffffff !important; 
+    color: #3b82f6 !important; 
+    transform: scale(1.05) translateZ(60px); /* هوفر بارز جداً */
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -171,13 +176,14 @@ body {
     justify-content: center;
     transition: all 0.3s ease;
     pointer-events: auto !important;
+    transform: translateZ(10px);
 }
 
 .delete-btn:hover {
-    background: #ff4b4b;
-    color: white;
-    border-color: #ff4b4b;
-    transform: scale(1.1);
+    background: #ff4b4b !important;
+    color: white !important;
+    border-color: #ff4b4b !important;
+    transform: scale(1.1) translateZ(60px);
 }
 
 .main-btn {
@@ -198,17 +204,16 @@ body {
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     
-    /* تعديل: رفع الزرار في طبقة Z عالية جداً لضمان التفاعل */
-    transform: translateZ(40px); 
+    transform: translateZ(60px); /* رفع الزرار في طبقة عالية جداً لضمان التفاعل */
     position: relative;
     z-index: 99;
     pointer-events: auto !important;
 }
 
 .main-btn:hover {
-    background: #ffffff; 
-    color: #3b82f6; 
-    transform: scale(1.05) translateZ(50px);
+    background: #ffffff !important; 
+    color: #3b82f6 !important; 
+    transform: scale(1.05) translateZ(90px); /* التأكيد على البروز في الهوفر */
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -219,7 +224,7 @@ body {
     border-radius: 50px; 
     width: 420px; 
     padding: 50px 40px;
-    text-align: center;
+    text-align: center; 
     color: white;
     box-shadow: 0 40px 100px rgba(0,0,0,0.3);
     transition: transform 0.1s ease-out;
@@ -246,7 +251,7 @@ body {
     z-index: 1; 
     overflow: hidden;
     isolation: isolate; 
-    transform: translateZ(20px); /* رفع الصورة */
+    transform: translateZ(50px); /* رفع الصورة */
 }
 
 .profile-avatar-wrapper::before {
@@ -269,7 +274,7 @@ body {
     z-index: 2; 
     overflow: hidden; 
     background: #222;
-    transform: translateZ(5px); 
+    transform: translateZ(10px); 
 }
 
 .profile-avatar img {
@@ -289,7 +294,7 @@ body {
     cursor: pointer;
     display: inline-block;
     transition: all 0.4s ease;
-    transform: translateZ(35px); /* الاسم بارز جداً */
+    transform: translateZ(80px); /* الاسم بارز جداً */
 }
 
 .profile-name::before {
@@ -315,7 +320,7 @@ body {
     justify-content: center; 
     gap: 15px; 
     margin-top: 20px;
-    transform: translateZ(30px); /* رفع الأيقونات للأمام */
+    transform: translateZ(70px); /* رفع الأيقونات للأمام */
     position: relative;
     z-index: 100;
 }
@@ -333,22 +338,20 @@ body {
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 1px solid rgba(255, 255, 255, 0.2);
     text-decoration: none;
-    
-    /* تعديل: السماح بالضغط حتى مع الـ 3D */
     pointer-events: auto !important;
     position: relative;
     z-index: 105;
 }
 
 .social-links a:hover {
-    transform: translateY(-10px) scale(1.1) translateZ(40px);
-    background: white; 
+    transform: translateY(-10px) scale(1.1) translateZ(100px) !important;
+    background: white !important; 
 }
 
-.social-links a:hover .fa-facebook { color: #1877F2; }
-.social-links a:hover .fa-instagram { color: #E4405F; }
-.social-links a:hover .fa-linkedin { color: #0A66C2; }
-.social-links a:hover .fa-whatsapp { color: #25D366; }
+.social-links a:hover .fa-facebook { color: #1877F2 !important; }
+.social-links a:hover .fa-instagram { color: #E4405F !important; }
+.social-links a:hover .fa-linkedin { color: #0A66C2 !important; }
+.social-links a:hover .fa-whatsapp { color: #25D366 !important; }
 
 /* تنسيق النتيجة (Result Area) المدمج */
 #result-area .social-links {
@@ -357,7 +360,7 @@ body {
     gap: 15px !important;
     margin: 25px 0 !important;
     width: 100% !important;
-    transform: translateZ(30px);
+    transform: translateZ(70px);
 }
 
 #result-area .social-links a {
@@ -385,7 +388,7 @@ body {
     align-items: center !important;
     justify-content: center !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    transform: translateZ(15px);
+    transform: translateZ(40px);
 }
 
 #qrcode img {
@@ -403,7 +406,7 @@ body {
     max-width: 280px !important;
     margin: 0 auto 12px auto !important;
     height: 50px !important;
-    transform: translateZ(40px);
+    transform: translateZ(80px); /* بروز عالي جداً لزر النسخ */
     z-index: 120;
     pointer-events: auto !important;
 }
