@@ -400,25 +400,25 @@ body {
     z-index: 10000 !important;
     cursor: pointer !important;
 }
-
 #qrcode {
-    background: white !important;
-    padding: 12px !important;
-    border-radius: 20px !important;
-    width: 160px !important; 
-    height: 160px !important;
+    background: #ffffff !important; 
+    padding: 20px !important;  
+    border-radius: 35px !important;
+    width: 220px !important;        
+    height: 220px !important;
     margin: 25px auto !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    transform: translateZ(15px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important; 
+    transform: translateZ(20px);
 }
 
 #qrcode img {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
+    width: 100% !important;  
+    height: auto !important;
+    display: block !important;
+    image-rendering: pixelated;
 }
 
 #qrcode canvas {
