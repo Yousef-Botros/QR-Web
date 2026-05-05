@@ -127,26 +127,39 @@ if (deleteBtn) {
     });
 }
 
-// --- الجزء المطور لحركة الكروت (Parallax System) ---
+// --- الجزء المطور لحركة الكروت (Parallax System) المعدل للموبايل والبروفايل ---
 
-// دالة تحريك العناصر الموحدة
-function moveElement(el, x, y) {
+function moveElement(el, x, y, isMouse = false) {
     if (!el) return;
+    // تم استخدام transition سريع جداً للموس وصفر للموبايل لضمان السلاسة
+    el.style.transition = isMouse ? "transform 0.1s ease-out" : "none";
     el.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-    el.style.transition = "transform 0.1s ease-out";
 }
 
-// 1. حركة الموبايل (Gyroscope)
-window.addEventListener('deviceorientation', (event) => {
-    // نجلب كل الكروت الممكنة في الصفحة (سواء index أو profile)
+// 1. دعم الموبايل (Touch & Gyroscope)
+// الحركة مع اللمس (Touch) أضمن وأسرع على المتصفحات من الـ Gyro
+document.addEventListener('touchmove', (e) => {
     const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+    const touch = e.touches[0];
     
-    let x = event.gamma / 5; // الهز يمين وشمال
-    let y = event.beta / 5;  // الهز قدام وورا
+    cards.forEach(card => {
+        if (getComputedStyle(card).display !== 'none') {
+            const rect = card.getBoundingClientRect();
+            const x = (touch.clientX - rect.left - rect.width / 2) / 10;
+            const y = (touch.clientY - rect.top - rect.height / 2) / 10;
+            moveElement(card, x, y);
+        }
+    });
+}, { passive: true });
 
-    if (x !== null && y !== null) {
+// دعم الـ Gyroscope (اختياري إضافي)
+window.addEventListener('deviceorientation', (event) => {
+    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+    let x = event.gamma / 4; 
+    let y = (event.beta - 45) / 4; 
+
+    if (event.gamma !== null) {
         cards.forEach(card => {
-            // نتحقق إن الكارت ظاهر فعلياً للمستخدم
             if (getComputedStyle(card).display !== 'none') {
                 moveElement(card, x, y);
             }
@@ -154,26 +167,27 @@ window.addEventListener('deviceorientation', (event) => {
     }
 });
 
-// 2. حركة الماوس للكمبيوتر (Desktop Mouse Move)
+// 2. حركة الماوس للكمبيوتر
 document.addEventListener('mousemove', (e) => {
     const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    
     cards.forEach(card => {
         if (getComputedStyle(card).display !== 'none') {
             const rect = card.getBoundingClientRect();
-            // حساب مكان الماوس بالنسبة لمنتصف الكارت
             const x = (e.clientX - rect.left - rect.width / 2) / 15;
             const y = (e.clientY - rect.top - rect.height / 2) / 15;
-            moveElement(card, x, y);
+            moveElement(card, x, y, true);
         }
     });
 });
 
-// 3. إعادة الكارت لوضعه الطبيعي عند خروج الماوس
-document.addEventListener('mouseleave', () => {
-    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    cards.forEach(card => {
-        card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        card.style.transition = "transform 0.5s ease";
+// 3. إعادة الكارت لوضعه الطبيعي (للماوس واللمس)
+const resetEvents = ['mouseleave', 'touchend'];
+resetEvents.forEach(evt => {
+    document.addEventListener(evt, () => {
+        const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+        cards.forEach(card => {
+            card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
+            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
     });
 });
