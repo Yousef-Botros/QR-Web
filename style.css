@@ -41,7 +41,6 @@ body {
     will-change: transform;
     position: relative;
     z-index: 1;
-    /* إضافة: السماح بالضغط */
     pointer-events: auto !important;
 }
 
@@ -81,7 +80,7 @@ body {
 .input-box { 
     position: relative; 
     margin-bottom: 15px; 
-    transform: translateZ(30px); /* رفع الصندوق قليلاً ليكون أمام الكارت */
+    transform: translateZ(30px); /* رفع الصندوق قليلاً */
 }
 
 .input-box input {
@@ -132,7 +131,7 @@ body {
     gap: 10px;
     margin-top: 15px;
     align-items: stretch;
-    transform: translateZ(40px); /* رفع منطقة الصور */
+    transform: translateZ(40px);
 }
 
 .upload-btn {
@@ -158,7 +157,7 @@ body {
 .upload-btn:hover {
     background: #ffffff !important; 
     color: #3b82f6 !important; 
-    transform: scale(1.05) translateZ(60px); /* هوفر بارز جداً */
+    transform: scale(1.05) translateZ(60px);
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -204,7 +203,7 @@ body {
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     
-    transform: translateZ(60px); /* رفع الزرار في طبقة عالية جداً لضمان التفاعل */
+    transform: translateZ(60px); 
     position: relative;
     z-index: 99;
     pointer-events: auto !important;
@@ -213,7 +212,7 @@ body {
 .main-btn:hover {
     background: #ffffff !important; 
     color: #3b82f6 !important; 
-    transform: scale(1.05) translateZ(90px); /* التأكيد على البروز في الهوفر */
+    transform: scale(1.05) translateZ(90px);
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -251,7 +250,7 @@ body {
     z-index: 1; 
     overflow: hidden;
     isolation: isolate; 
-    transform: translateZ(50px); /* رفع الصورة */
+    transform: translateZ(50px); 
 }
 
 .profile-avatar-wrapper::before {
@@ -294,7 +293,7 @@ body {
     cursor: pointer;
     display: inline-block;
     transition: all 0.4s ease;
-    transform: translateZ(80px); /* الاسم بارز جداً */
+    transform: translateZ(80px); 
 }
 
 .profile-name::before {
@@ -320,9 +319,10 @@ body {
     justify-content: center; 
     gap: 15px; 
     margin-top: 20px;
-    transform: translateZ(70px); /* رفع الأيقونات للأمام */
+    transform: translateZ(90px) !important; /* رفعنا الطبقة جداً */
     position: relative;
-    z-index: 100;
+    z-index: 1000 !important;
+    pointer-events: auto !important; /* السماح بالتفاعل التام */
 }
 
 .social-links a {
@@ -340,12 +340,13 @@ body {
     text-decoration: none;
     pointer-events: auto !important;
     position: relative;
-    z-index: 105;
+    z-index: 1005 !important;
 }
 
 .social-links a:hover {
-    transform: translateY(-10px) scale(1.1) translateZ(100px) !important;
+    transform: translateY(-10px) scale(1.1) translateZ(120px) !important;
     background: white !important; 
+    box-shadow: 0 15px 30px rgba(255,255,255,0.4);
 }
 
 .social-links a:hover .fa-facebook { color: #1877F2 !important; }
@@ -360,7 +361,8 @@ body {
     gap: 15px !important;
     margin: 25px 0 !important;
     width: 100% !important;
-    transform: translateZ(70px);
+    transform: translateZ(90px);
+    pointer-events: auto !important;
 }
 
 #result-area .social-links a {
@@ -406,7 +408,7 @@ body {
     max-width: 280px !important;
     margin: 0 auto 12px auto !important;
     height: 50px !important;
-    transform: translateZ(80px); /* بروز عالي جداً لزر النسخ */
+    transform: translateZ(100px); 
     z-index: 120;
     pointer-events: auto !important;
 }
