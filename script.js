@@ -17,7 +17,7 @@ if (photoInput) {
             const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
             const data = await res.json();
             uploadedImageUrl = data.secure_url;
-            upText.innerText = 'Image Uploaded ✅';
+            upText.innerText = 'Image Uploaded';
             if (document.getElementById('delete-photo')) document.getElementById('delete-photo').style.display = 'flex';
         } catch (err) {
             upText.innerText = 'Error! ❌';
@@ -62,15 +62,15 @@ function generate() {
             </div>
         </div>
     `;
-
-    new QRCode(document.getElementById('qrcode'), {
-        text: profileUrl,
-        width: 180,
-        height: 180,
-        correctLevel: QRCode.CorrectLevel.H
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: profileUrl,
+    width: 180, 
+    height: 180,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.M
     });
-
-    window.generatedProfileUrl = profileUrl;
+    
 }
 
 function copyProfileLink(url) {
@@ -83,7 +83,7 @@ function copyProfileLink(url) {
     document.body.removeChild(el);
     
     const btnText = document.getElementById('copyText');
-    btnText.innerText = "Link Copied! ✅";
+    btnText.innerText = "Link Copied";
     setTimeout(() => btnText.innerText = "Copy Profile Link", 2000);
 }
 
