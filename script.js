@@ -3,6 +3,7 @@ const CLOUDINARY_UPLOAD_PRESET = 'Yousef';
 
 let uploadedImageUrl = null;
 
+// --- 1. Cloudinary & Photo Logic ---
 const photoInput = document.getElementById('photo');
 if (photoInput) {
     photoInput.addEventListener('change', async (e) => {
@@ -26,6 +27,17 @@ if (photoInput) {
     });
 }
 
+const deleteBtn = document.getElementById('delete-photo');
+if (deleteBtn) {
+    deleteBtn.addEventListener('click', () => {
+        uploadedImageUrl = null;
+        document.getElementById('photo').value = '';
+        document.getElementById('upText').innerText = 'Upload Identity Photo';
+        deleteBtn.style.display = 'none';
+    });
+}
+
+// --- 2. Generation Logic ---
 function generate() {
     const nameInput = document.getElementById('name');
     if (!nameInput || !nameInput.value) return alert("Please enter your name!");
@@ -42,15 +54,8 @@ function generate() {
     const encoded = encodeURIComponent(JSON.stringify(payload));
     const profileUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${encoded}`;
 
-    const shortPayload = { 
-        n: payload.name, 
-        f: payload.fb, 
-        i: payload.ig, 
-        l: payload.ln, 
-        w: payload.wa,
-        p: payload.img 
-    };
-    
+    // بيانات مختصرة للـ QR لضمان سرعة المسح
+    const shortPayload = { n: payload.name, f: payload.fb, i: payload.ig, l: payload.ln, w: payload.wa, p: payload.img };
     const shortEncoded = encodeURIComponent(JSON.stringify(shortPayload));
     const qrUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${shortEncoded}`;
 
@@ -100,6 +105,9 @@ function generate() {
     }
 
     window.generatedProfileUrl = profileUrl;
+    
+    // تفعيل حساسات الموبايل فور توليد الكارت
+    initGyro();
 }
 
 function copyProfileLink() {
@@ -109,65 +117,48 @@ function copyProfileLink() {
             const originalText = copyText.innerText;
             copyText.innerText = "Link Copied";
             setTimeout(() => { copyText.innerText = originalText; }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-        });
+        }).catch(err => console.error('Failed to copy: ', err));
     } else {
         alert("No link generated yet!");
     }
 }
 
-const deleteBtn = document.getElementById('delete-photo');
-if (deleteBtn) {
-    deleteBtn.addEventListener('click', () => {
-        uploadedImageUrl = null;
-        document.getElementById('photo').value = '';
-        document.getElementById('upText').innerText = 'Upload Identity Photo';
-        deleteBtn.style.display = 'none';
-    });
-}
-
-// --- الجزء المطور لحركة الكروت (Parallax System) المعدل للموبايل والبروفايل ---
+// --- 3. Professional Parallax System (Gyro & Mouse) ---
 
 function moveElement(el, x, y, isMouse = false) {
     if (!el) return;
-    // تم استخدام transition سريع جداً للموس وصفر للموبايل لضمان السلاسة
-    el.style.transition = isMouse ? "transform 0.1s ease-out" : "none";
+    // تنعيم الحركة جداً لمنع الـ Flicker
+    el.style.transition = isMouse ? "transform 0.1s ease-out" : "transform 0.2s ease-out";
     el.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
 }
 
-// 1. دعم الموبايل (Touch & Gyroscope)
-// الحركة مع اللمس (Touch) أضمن وأسرع على المتصفحات من الـ Gyro
-document.addEventListener('touchmove', (e) => {
+// دعم الموبايل (Gyroscope) - يتحرك مع ميلان الهاتف
+function initGyro() {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // للأيفون لازم إذن
+        DeviceOrientationEvent.requestPermission()
+            .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleGyro); })
+            .catch(console.error);
+    } else {
+        // للأندرويد
+        window.addEventListener('deviceorientation', handleGyro);
+    }
+}
+
+function handleGyro(event) {
     const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    const touch = e.touches[0];
-    
+    // x: ميلان يمين/شمال | y: ميلان قدام/ورا
+    let x = event.gamma / 3; 
+    let y = (event.beta - 45) / 3; 
+
     cards.forEach(card => {
         if (getComputedStyle(card).display !== 'none') {
-            const rect = card.getBoundingClientRect();
-            const x = (touch.clientX - rect.left - rect.width / 2) / 10;
-            const y = (touch.clientY - rect.top - rect.height / 2) / 10;
             moveElement(card, x, y);
         }
     });
-}, { passive: true });
+}
 
-// دعم الـ Gyroscope (اختياري إضافي)
-window.addEventListener('deviceorientation', (event) => {
-    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    let x = event.gamma / 4; 
-    let y = (event.beta - 45) / 4; 
-
-    if (event.gamma !== null) {
-        cards.forEach(card => {
-            if (getComputedStyle(card).display !== 'none') {
-                moveElement(card, x, y);
-            }
-        });
-    }
-});
-
-// 2. حركة الماوس للكمبيوتر
+// دعم الماوس للكمبيوتر
 document.addEventListener('mousemove', (e) => {
     const cards = document.querySelectorAll('.card, .profile-card, #result-area');
     cards.forEach(card => {
@@ -180,14 +171,11 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
-// 3. إعادة الكارت لوضعه الطبيعي (للماوس واللمس)
-const resetEvents = ['mouseleave', 'touchend'];
-resetEvents.forEach(evt => {
-    document.addEventListener(evt, () => {
-        const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-        cards.forEach(card => {
-            card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
-            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
+// إعادة الوضع الطبيعي عند الخروج بالماوس
+document.addEventListener('mouseleave', () => {
+    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
+    cards.forEach(card => {
+        card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
+        card.style.transform = `rotateY(0deg) rotateX(0deg)`;
     });
 });
