@@ -2,42 +2,29 @@ const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dhmlc2atm/image/upload';
 const CLOUDINARY_UPLOAD_PRESET = 'Yousef'; 
 
 let uploadedImageUrl = null;
-
-// --- 1. Cloudinary & Photo Logic ---
 const photoInput = document.getElementById('photo');
+
 if (photoInput) {
     photoInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
-        document.getElementById('upText').innerText = 'Uploading...';
+        const upText = document.getElementById('upText');
+        upText.innerText = 'Uploading...';
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
         try {
             const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-            const resData = await res.json();
-            uploadedImageUrl = resData.secure_url;
-            document.getElementById('upText').innerText = 'Image Uploaded';
-            document.getElementById('delete-photo').style.display = 'flex';
+            const data = await res.json();
+            uploadedImageUrl = data.secure_url;
+            upText.innerText = 'Image Uploaded ✅';
+            if (document.getElementById('delete-photo')) document.getElementById('delete-photo').style.display = 'flex';
         } catch (err) {
-            document.getElementById('upText').innerText = 'Error! ❌';
+            upText.innerText = 'Error! ❌';
         }
     });
 }
 
-const deleteBtn = document.getElementById('delete-photo');
-if (deleteBtn) {
-    deleteBtn.addEventListener('click', () => {
-        uploadedImageUrl = null;
-        document.getElementById('photo').value = '';
-        document.getElementById('upText').innerText = 'Upload Identity Photo';
-        deleteBtn.style.display = 'none';
-    });
-}
-
-// --- 2. Generation Logic ---
 function generate() {
     const nameInput = document.getElementById('name');
     if (!nameInput || !nameInput.value) return alert("Please enter your name!");
@@ -52,132 +39,69 @@ function generate() {
     };
 
     const encoded = encodeURIComponent(JSON.stringify(payload));
-    const profileUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${encoded}`;
-
-    // بيانات مختصرة للـ QR لضمان سرعة المسح
-    const shortPayload = { n: payload.name, f: payload.fb, i: payload.ig, l: payload.ln, w: payload.wa, p: payload.img };
-    const shortEncoded = encodeURIComponent(JSON.stringify(shortPayload));
-    const qrUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}profile.html?data=${shortEncoded}`;
+    const currentPath = window.location.pathname;
+    const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
+    const profileUrl = `${window.location.origin}${directory}/profile.html?data=${encoded}`;
 
     document.getElementById('main-card').style.display = 'none';
     const resultArea = document.getElementById('result-area');
     resultArea.style.display = 'block';
-
-    document.getElementById('display-name').innerText = payload.name;
-    document.getElementById('display-name').setAttribute('data-text', payload.name);
     
-    if (uploadedImageUrl) {
-        const imgElement = document.getElementById('profile-img');
-        imgElement.src = uploadedImageUrl;
-        imgElement.style.display = 'block'; 
-    }
+    resultArea.innerHTML = `
+        <div class="static-qr-card" style="text-align: center; padding: 40px; background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); max-width: 400px; margin: auto; position: relative; z-index: 100;">
+            <h2 style="margin-bottom: 20px; color: white;">Ready to Share!</h2>
+            <div id="qrcode" style="background: white; padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 25px;"></div>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="main-btn" onclick="copyProfileLink('${profileUrl}')" style="cursor: pointer !important; position: relative; z-index: 101;">
+                    <i class="fas fa-copy"></i> <span id="copyText">Copy Profile Link</span>
+                </button>
+                <button class="main-btn" onclick="window.location.reload()" style="background: rgba(255,255,255,0.1); cursor: pointer !important; position: relative; z-index: 101;">
+                    <i class="fas fa-undo"></i> Create New One
+                </button>
+            </div>
+        </div>
+    `;
 
-    const socialLinks = {
-        'link-fb': payload.fb,
-        'link-ig': payload.ig,
-        'link-ln': payload.ln,
-        'link-wa': payload.wa ? `https://wa.me/${payload.wa}` : null
-    };
-
-    Object.entries(socialLinks).forEach(([id, url]) => {
-        const el = document.getElementById(id);
-        if (el) {
-            if (url) {
-                el.href = url.startsWith('http') ? url : `https://${url}`;
-                el.style.display = 'flex';
-            } else {
-                el.style.display = 'none';
-            }
-        }
+    new QRCode(document.getElementById('qrcode'), {
+        text: profileUrl,
+        width: 180,
+        height: 180,
+        correctLevel: QRCode.CorrectLevel.H
     });
-
-    const qrBox = document.getElementById('qrcode');
-    if (qrBox) {
-        qrBox.innerHTML = ""; 
-        new QRCode(qrBox, {
-            text: qrUrl,
-            width: 256,
-            height: 256,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.L
-        });
-    }
 
     window.generatedProfileUrl = profileUrl;
+}
+
+function copyProfileLink(url) {
+    const link = url || window.generatedProfileUrl;
+    const el = document.createElement('textarea');
+    el.value = link;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
     
-    // تفعيل حساسات الموبايل فور توليد الكارت
-    initGyro();
+    const btnText = document.getElementById('copyText');
+    btnText.innerText = "Link Copied! ✅";
+    setTimeout(() => btnText.innerText = "Copy Profile Link", 2000);
 }
 
-function copyProfileLink() {
-    if (window.generatedProfileUrl) {
-        navigator.clipboard.writeText(window.generatedProfileUrl).then(() => {
-            const copyText = document.getElementById('copyText');
-            const originalText = copyText.innerText;
-            copyText.innerText = "Link Copied";
-            setTimeout(() => { copyText.innerText = originalText; }, 2000);
-        }).catch(err => console.error('Failed to copy: ', err));
-    } else {
-        alert("No link generated yet!");
-    }
-}
-
-// --- 3. Professional Parallax System (Modified for Stability & Interactivity) ---
-
-function moveElement(el, x, y, isMouse = false) {
-    if (!el) return;
-    // تم تحسين الـ transition ليكون أسرع في الاستجابة وأهدى في الحركة
-    el.style.transition = isMouse ? "transform 0.2s cubic-bezier(0.03, 0.98, 0.52, 0.99)" : "transform 0.1s ease-out";
-    el.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-}
-
-// دعم الموبايل (Gyroscope)
-function initGyro() {
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-            .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleGyro); })
-            .catch(console.error);
-    } else {
-        window.addEventListener('deviceorientation', handleGyro);
-    }
-}
-
-function handleGyro(event) {
-    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    // تم القسمة على 8 بدل 3 لتقليل المرجحة العنيفة على الموبايل
-    let x = event.gamma / 8; 
-    let y = (event.beta - 45) / 8; 
-
-    cards.forEach(card => {
-        if (getComputedStyle(card).display !== 'none') {
-            moveElement(card, x, y);
+function initLimited3D() {
+    document.addEventListener('mousemove', (e) => {
+        const mainCard = document.getElementById('main-card');
+        
+        if (mainCard && getComputedStyle(mainCard).display !== 'none') {
+            const rect = mainCard.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width / 2) / 30;
+            const y = (rect.height / 2 - (e.clientY - rect.top)) / 30;
+            mainCard.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${y}deg)`;
         }
     });
+
+    document.addEventListener('mouseleave', () => {
+        const mainCard = document.getElementById('main-card');
+        if (mainCard) mainCard.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg)`;
+    });
 }
-
-// دعم الماوس للكمبيوتر
-document.addEventListener('mousemove', (e) => {
-    const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-    cards.forEach(card => {
-        if (getComputedStyle(card).display !== 'none') {
-            const rect = card.getBoundingClientRect();
-            // تم القسمة على 35 بدل 15 ليكون التأثير ناعم ولا يؤثر على دقة الضغط على الأزرار
-            const x = (e.clientX - rect.left - rect.width / 2) / 35;
-            const y = (e.clientY - rect.top - rect.height / 2) / 35;
-            moveElement(card, x, y, true);
-        }
-    });
-});
-
-// إعادة الوضع الطبيعي عند الخروج بالماوس أو انتهاء اللمس
-const resetEvents = ['mouseleave', 'touchend'];
-resetEvents.forEach(evt => {
-    document.addEventListener(evt, () => {
-        const cards = document.querySelectorAll('.card, .profile-card, #result-area');
-        cards.forEach(card => {
-            card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
-            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-    });
-});
+initLimited3D();
