@@ -14,9 +14,7 @@ body {
     background-size: 400% 400%; 
     animation: gradientBG 10s ease infinite;
     overflow: hidden; 
-    perspective: 1500px; /* دي اللي بتخلي الهزة تبان 3D */
-    
-    /* تعديل لضمان عدم تعارض اللمس مع السكرول */
+    perspective: 2000px;
     touch-action: none; 
 }
 
@@ -44,15 +42,15 @@ body {
     pointer-events: auto !important;
 }
 
-/* التعديل: ضمان إن كارت النتيجة يدعم العمق والضغط */
 #result-area {
     transform-style: preserve-3d;
     will-change: transform;
     transition: transform 0.1s ease-out;
     transform: rotateY(0deg) rotateX(0deg);
     position: relative;
-    display: none; /* بيظهر بالـ JS */
+    display: none; 
     pointer-events: auto !important;
+    z-index: 2;
 }
 
 .card:not(.profile-card) h2 {
@@ -62,7 +60,7 @@ body {
     letter-spacing: 0.5px;
     animation: pulseGlow 2s infinite ease-in-out;
     transition: all 0.3s ease;
-    transform: translateZ(50px); /* زيادة البروز لضمان الهوفر */
+    transform: translateZ(20px);
 }
 
 .card:not(.profile-card) h2:hover {
@@ -80,7 +78,8 @@ body {
 .input-box { 
     position: relative; 
     margin-bottom: 15px; 
-    transform: translateZ(30px); /* رفع الصندوق قليلاً */
+    transform: translateZ(10px); 
+    z-index: 5;
 }
 
 .input-box input {
@@ -93,6 +92,8 @@ body {
     outline: none; 
     transition: all 0.3s ease;
     pointer-events: auto !important;
+    position: relative;
+    z-index: 10;
 }
 
 .input-box:hover input {
@@ -114,6 +115,7 @@ body {
     transform: translateY(-50%) translateZ(5px); 
     color: white; 
     transition: all 0.3s ease; 
+    z-index: 11;
 }
 
 .input-box:hover .fa-user { color: #fff !important; filter: drop-shadow(0 0 8px #3b82f6); }
@@ -131,7 +133,9 @@ body {
     gap: 10px;
     margin-top: 15px;
     align-items: stretch;
-    transform: translateZ(40px);
+    transform: translateZ(15px);
+    position: relative;
+    z-index: 15;
 }
 
 .upload-btn {
@@ -139,7 +143,7 @@ body {
     padding: 18px; 
     border-radius: 20px; 
     border: 1px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer; 
+    cursor: pointer !important; 
     font-weight: 800; 
     font-size: 16px;
     display: flex; 
@@ -151,13 +155,15 @@ body {
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: auto !important; 
-    transform: translateZ(10px);
+    transform: translateZ(5px);
+    position: relative;
+    z-index: 20;
 }
 
 .upload-btn:hover {
     background: #ffffff !important; 
     color: #3b82f6 !important; 
-    transform: scale(1.05) translateZ(60px);
+    transform: scale(1.05) translateZ(15px);
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -168,21 +174,23 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: rgba(255, 255, 255, 0.6);
     border-radius: 20px;
-    cursor: pointer;
+    cursor: pointer !important;
     font-size: 20px;
     display: none; 
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
     pointer-events: auto !important;
-    transform: translateZ(10px);
+    transform: translateZ(5px);
+    position: relative;
+    z-index: 20;
 }
 
 .delete-btn:hover {
     background: #ff4b4b !important;
     color: white !important;
     border-color: #ff4b4b !important;
-    transform: scale(1.1) translateZ(60px);
+    transform: scale(1.1) translateZ(15px);
 }
 
 .main-btn {
@@ -190,7 +198,7 @@ body {
     padding: 18px; 
     border-radius: 20px; 
     border: 1px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer; 
+    cursor: pointer !important; 
     font-weight: 800; 
     font-size: 16px;
     display: flex; 
@@ -202,17 +210,16 @@ body {
     color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    
-    transform: translateZ(60px); 
+    transform: translateZ(25px); /* تم الضبط ليبقى ضمن نطاق التفاعل */
     position: relative;
-    z-index: 99;
+    z-index: 100 !important; 
     pointer-events: auto !important;
 }
 
 .main-btn:hover {
     background: #ffffff !important; 
     color: #3b82f6 !important; 
-    transform: scale(1.05) translateZ(90px);
+    transform: scale(1.05) translateZ(35px);
     box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
 }
 
@@ -231,6 +238,7 @@ body {
     will-change: transform;
     position: relative;
     z-index: 1;
+    pointer-events: auto !important;
 }
 
 .profile-card > * {
@@ -250,7 +258,7 @@ body {
     z-index: 1; 
     overflow: hidden;
     isolation: isolate; 
-    transform: translateZ(50px); 
+    transform: translateZ(20px); 
 }
 
 .profile-avatar-wrapper::before {
@@ -273,7 +281,7 @@ body {
     z-index: 2; 
     overflow: hidden; 
     background: #222;
-    transform: translateZ(10px); 
+    transform: translateZ(5px); 
 }
 
 .profile-avatar img {
@@ -285,28 +293,34 @@ body {
     will-change: transform;
 }
 
+@keyframes profileNameGlow {
+    0%, 100% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+    50% { opacity: 1; text-shadow: 0 0 25px rgba(255,255,255,0.9), 0 0 35px rgba(255,255,255,0.5); }
+}
+
 .profile-name {
     font-size: 38px; 
     font-weight: 900; 
     position: relative;
-    color: rgba(255, 255, 255, 0.8);
-    cursor: pointer;
+    color: white; 
+    cursor: pointer !important;
     display: inline-block;
     transition: all 0.4s ease;
-    transform: translateZ(80px); 
+    transform: translateZ(30px); 
+    pointer-events: auto !important;
+    z-index: 10;
+
+    animation: profileNameGlow 2s infinite ease-in-out; 
+}
+
+.profile-name:hover {
+    animation-play-state: paused; 
+    opacity: 1;
+    text-shadow: 0 0 20px #ffffff, 0 0 40px rgba(255,255,255,0.6); 
 }
 
 .profile-name::before {
-    content: attr(data-text); 
-    position: absolute; 
-    top: 0; 
-    left: 0;
-    width: 0; 
-    height: 100%; 
-    color: #ffffff; 
-    overflow: hidden;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    white-space: nowrap;
+    display: none; 
 }
 
 .profile-name:hover::before { 
@@ -319,10 +333,10 @@ body {
     justify-content: center; 
     gap: 15px; 
     margin-top: 20px;
-    transform: translateZ(90px) !important; /* رفعنا الطبقة جداً */
+    transform: translateZ(35px) !important; 
     position: relative;
-    z-index: 1000 !important;
-    pointer-events: auto !important; /* السماح بالتفاعل التام */
+    z-index: 9999 !important; 
+    pointer-events: auto !important;
 }
 
 .social-links a {
@@ -330,23 +344,29 @@ body {
     height: 60px; 
     background: rgba(255, 255, 255, 0.15); 
     border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important; 
     color: white; 
     font-size: 26px; 
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 1px solid rgba(255, 255, 255, 0.2);
     text-decoration: none;
-    pointer-events: auto !important;
+    pointer-events: auto !important; 
+    cursor: pointer !important; 
     position: relative;
-    z-index: 1005 !important;
+    z-index: 10000 !important;
+    backface-visibility: hidden;
 }
 
 .social-links a:hover {
-    transform: translateY(-10px) scale(1.1) translateZ(120px) !important;
+    transform: translateY(-10px) scale(1.1) translateZ(10px) !important;
     background: white !important; 
     box-shadow: 0 15px 30px rgba(255,255,255,0.4);
+}
+
+.social-links a:hover i {
+    transform: scale(1.2);
 }
 
 .social-links a:hover .fa-facebook { color: #1877F2 !important; }
@@ -354,15 +374,16 @@ body {
 .social-links a:hover .fa-linkedin { color: #0A66C2 !important; }
 .social-links a:hover .fa-whatsapp { color: #25D366 !important; }
 
-/* تنسيق النتيجة (Result Area) المدمج */
 #result-area .social-links {
     display: flex !important;
     justify-content: center !important;
     gap: 15px !important;
     margin: 25px 0 !important;
     width: 100% !important;
-    transform: translateZ(90px);
+    transform: translateZ(40px) !important;
     pointer-events: auto !important;
+    position: relative;
+    z-index: 9999;
 }
 
 #result-area .social-links a {
@@ -376,7 +397,8 @@ body {
     justify-content: center !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     pointer-events: auto !important;
-    z-index: 110;
+    z-index: 10000 !important;
+    cursor: pointer !important;
 }
 
 #qrcode {
@@ -390,7 +412,7 @@ body {
     align-items: center !important;
     justify-content: center !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    transform: translateZ(40px);
+    transform: translateZ(15px);
 }
 
 #qrcode img {
@@ -408,7 +430,8 @@ body {
     max-width: 280px !important;
     margin: 0 auto 12px auto !important;
     height: 50px !important;
-    transform: translateZ(100px); 
-    z-index: 120;
+    transform: translateZ(30px) !important; 
+    z-index: 9999 !important;
     pointer-events: auto !important;
+    cursor: pointer !important;
 }
