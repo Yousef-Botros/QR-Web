@@ -14,9 +14,7 @@ body {
     background-size: 400% 400%; 
     animation: gradientBG 10s ease infinite;
     overflow: hidden; 
-    perspective: 1500px; /* دي اللي بتخلي الهزة تبان 3D */
-    
-    /* تعديل لضمان عدم تعارض اللمس مع السكرول */
+    perspective: 1500px; 
     touch-action: none; 
 }
 
@@ -44,14 +42,13 @@ body {
     pointer-events: auto !important;
 }
 
-/* التعديل: ضمان إن كارت النتيجة يدعم العمق والضغط */
 #result-area {
     transform-style: preserve-3d;
     will-change: transform;
     transition: transform 0.1s ease-out;
     transform: rotateY(0deg) rotateX(0deg);
     position: relative;
-    display: none; /* بيظهر بالـ JS */
+    display: none; 
     pointer-events: auto !important;
 }
 
@@ -62,7 +59,7 @@ body {
     letter-spacing: 0.5px;
     animation: pulseGlow 2s infinite ease-in-out;
     transition: all 0.3s ease;
-    transform: translateZ(50px); /* زيادة البروز لضمان الهوفر */
+    transform: translateZ(50px); 
 }
 
 .card:not(.profile-card) h2:hover {
@@ -80,7 +77,7 @@ body {
 .input-box { 
     position: relative; 
     margin-bottom: 15px; 
-    transform: translateZ(30px); /* رفع الصندوق قليلاً */
+    transform: translateZ(30px);
 }
 
 .input-box input {
@@ -115,12 +112,6 @@ body {
     color: white; 
     transition: all 0.3s ease; 
 }
-
-.input-box:hover .fa-user { color: #fff !important; filter: drop-shadow(0 0 8px #3b82f6); }
-.input-box:hover .fa-facebook { color: #1877F2 !important; filter: drop-shadow(0 0 8px #1877F2); }
-.input-box:hover .fa-instagram { color: #E4405F !important; filter: drop-shadow(0 0 8px #E4405F); }
-.input-box:hover .fa-linkedin { color: #0A66C2 !important; filter: drop-shadow(0 0 8px #0A66C2); }
-.input-box:hover .fa-whatsapp { color: #25D366 !important; filter: drop-shadow(0 0 8px #25D366); }
 
 .input-box:hover i {
     transform: translateY(-50%) scale(1.2) translateZ(10px);
@@ -178,13 +169,6 @@ body {
     transform: translateZ(10px);
 }
 
-.delete-btn:hover {
-    background: #ff4b4b !important;
-    color: white !important;
-    border-color: #ff4b4b !important;
-    transform: scale(1.1) translateZ(60px);
-}
-
 .main-btn {
     width: 100%; 
     padding: 18px; 
@@ -202,20 +186,13 @@ body {
     color: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(5px);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    
     transform: translateZ(60px); 
     position: relative;
     z-index: 99;
     pointer-events: auto !important;
 }
 
-.main-btn:hover {
-    background: #ffffff !important; 
-    color: #3b82f6 !important; 
-    transform: scale(1.05) translateZ(90px);
-    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.3);
-}
-
+/* --- تعديلات كارت البروفايل المخصصة فقط --- */
 .profile-card {
     background: rgba(255, 255, 255, 0.15); 
     backdrop-filter: blur(25px);
@@ -227,14 +204,15 @@ body {
     color: white;
     box-shadow: 0 40px 100px rgba(0,0,0,0.3);
     transition: transform 0.1s ease-out;
-    transform-style: preserve-3d;
+    transform-style: preserve-3d !important;
     will-change: transform;
     position: relative;
     z-index: 1;
+    pointer-events: auto !important;
 }
 
 .profile-card > * {
-    transform-style: preserve-3d;
+    transform-style: preserve-3d !important;
 }
 
 .profile-avatar-wrapper {
@@ -247,7 +225,7 @@ body {
     align-items: center;
     border-radius: 50%; 
     padding: 4px; 
-    z-index: 1; 
+    z-index: 10; 
     overflow: hidden;
     isolation: isolate; 
     transform: translateZ(50px); 
@@ -263,14 +241,12 @@ body {
     z-index: -1;
 }
 
-@keyframes rotateFrame { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
 .profile-avatar {
     width: 188px; 
     height: 188px; 
     border-radius: 50%; 
     position: relative;
-    z-index: 2; 
+    z-index: 11; 
     overflow: hidden; 
     background: #222;
     transform: translateZ(10px); 
@@ -281,8 +257,6 @@ body {
     height: 100%; 
     object-fit: cover; 
     image-rendering: -webkit-optimize-contrast; 
-    transform: translate3d(0, 0, 0); 
-    will-change: transform;
 }
 
 .profile-name {
@@ -293,39 +267,23 @@ body {
     cursor: pointer;
     display: inline-block;
     transition: all 0.4s ease;
-    transform: translateZ(80px); 
+    transform: translateZ(85px); 
+    z-index: 15;
 }
 
-.profile-name::before {
-    content: attr(data-text); 
-    position: absolute; 
-    top: 0; 
-    left: 0;
-    width: 0; 
-    height: 100%; 
-    color: #ffffff; 
-    overflow: hidden;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    white-space: nowrap;
-}
-
-.profile-name:hover::before { 
-    width: 100%; 
-    filter: drop-shadow(0 0 15px #ffffff); 
-}
-
-.social-links { 
+/* إصلاح أيقونات السوشيال في البروفايل */
+.profile-card .social-links { 
     display: flex; 
     justify-content: center; 
     gap: 15px; 
     margin-top: 20px;
-    transform: translateZ(90px) !important; /* رفعنا الطبقة جداً */
+    transform: translateZ(110px) !important; /* رفعناها فوق طبقة الكارت */
     position: relative;
     z-index: 1000 !important;
-    pointer-events: auto !important; /* السماح بالتفاعل التام */
+    pointer-events: auto !important;
 }
 
-.social-links a {
+.profile-card .social-links a {
     width: 60px; 
     height: 60px; 
     background: rgba(255, 255, 255, 0.15); 
@@ -341,20 +299,38 @@ body {
     pointer-events: auto !important;
     position: relative;
     z-index: 1005 !important;
+    cursor: pointer !important;
 }
 
-.social-links a:hover {
-    transform: translateY(-10px) scale(1.1) translateZ(120px) !important;
+.profile-card .social-links a:hover {
+    transform: translateY(-10px) scale(1.1) translateZ(30px) !important;
     background: white !important; 
     box-shadow: 0 15px 30px rgba(255,255,255,0.4);
 }
 
-.social-links a:hover .fa-facebook { color: #1877F2 !important; }
-.social-links a:hover .fa-instagram { color: #E4405F !important; }
-.social-links a:hover .fa-linkedin { color: #0A66C2 !important; }
-.social-links a:hover .fa-whatsapp { color: #25D366 !important; }
+.profile-card .social-links a:hover .fa-facebook { color: #1877F2 !important; }
+.profile-card .social-links a:hover .fa-instagram { color: #E4405F !important; }
+.profile-card .social-links a:hover .fa-linkedin { color: #0A66C2 !important; }
+.profile-card .social-links a:hover .fa-whatsapp { color: #25D366 !important; }
 
-/* تنسيق النتيجة (Result Area) المدمج */
+/* إصلاح أزرار البروفايل (Copy & Edit) */
+.profile-card .main-btn {
+    width: 100% !important;
+    padding: 18px; 
+    border-radius: 20px; 
+    transform: translateZ(100px) !important;
+    z-index: 999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.profile-card .main-btn:hover {
+    background: #ffffff !important; 
+    color: #ff5f6d !important; 
+    transform: scale(1.05) translateZ(120px) !important;
+}
+
+/* تنسيق النتيجة */
 #result-area .social-links {
     display: flex !important;
     justify-content: center !important;
@@ -390,25 +366,11 @@ body {
     align-items: center !important;
     justify-content: center !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    transform: translateZ(40px);
+    transform: translateZ(80px); /* رفعنا الـ QR عشان يبان في الـ 3D */
 }
 
 #qrcode img {
     width: 100% !important;
     height: 100% !important;
     display: block;
-}
-
-#qrcode canvas {
-    display: none !important;
-}
-
-#result-area .main-btn {
-    width: 100% !important;
-    max-width: 280px !important;
-    margin: 0 auto 12px auto !important;
-    height: 50px !important;
-    transform: translateZ(100px); 
-    z-index: 120;
-    pointer-events: auto !important;
 }
